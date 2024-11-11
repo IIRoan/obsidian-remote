@@ -1,4 +1,3 @@
-# Use a generic Debian slim image
 FROM debian:bullseye-slim
 
 LABEL maintainer="github@sytone.com" \
@@ -39,13 +38,14 @@ ENV CUSTOM_PORT="8080" \
     PASSWORD="" \
     SUBFOLDER="" \
     TITLE="Obsidian v${OBSIDIAN_VERSION}" \
-    FM_HOME="/vaults"
-
-# Add local files
-COPY root/ /
+    FM_HOME="/data/vaults" \
+    CONFIG_PATH="/data/config"
 
 # Expose ports
 EXPOSE 8080 8443
 
 # Define a healthcheck
 HEALTHCHECK CMD /bin/sh -c 'if [ -z "$CUSTOM_USER" ] || [ -z "$PASSWORD" ]; then curl --fail http://localhost:8080/ || exit 1; else curl --fail --user "$CUSTOM_USER:$PASSWORD" http://localhost:8080/ || exit 1; fi'
+
+# Create the required directories
+RUN mkdir -p /data/vaults /data/config
